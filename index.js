@@ -4,23 +4,19 @@ let userModel = require("./Schemas/User")
 
 const port = process.env.PORT || 3000;
 
+/* Need mongoose.connect('mongodb+srv://<UserName>:<Password>@cluster0-
+8vkls.mongodb.net/<DBName>?retryWrites=true&w=majority', {
+    useNewUrlParser: true
+    });,
+*/
 
 app.get('/',(req,res) => {
     res.send("Test");
 })
 
 // Allow user to create new account
-// NOT WORKING YET 
-app.post('/api/v1/user/signup', async(req,res) => {
-    const user = new userModel(req.body)
-    try{
-        await user.save();
-        res.send(user)
-    } catch(err) {
-        res.status(500)
-        res.send(err);
-    }
-    res.status(201);
+app.post('/api/v1/user/signup', (req,res) => {
+   
 })
 
 // Allow user to access the system
