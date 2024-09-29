@@ -1,19 +1,9 @@
 const mongoose = require('mongoose');
 
-const UserSchema = mongoose.Schema(
-    {
-        "_id": ObjectId,
-        "username": String,
-        "email": String,
-        "password": String, // This should be hashed
-        "created_at": Date,
-        "updated_at": Date
-       }
-);
 
 const EmployeeSchema = mongoose.Schema(
     {
-        "_id": ObjectId,
+        "_id": Number,
         "first_name": String,
         "last_name": String,
         "email": String,
@@ -26,6 +16,6 @@ const EmployeeSchema = mongoose.Schema(
        }       
 )
 
-const User = mongoose.model("User",UserSchema);
+
 const Employee = mongoose.model("Employee",EmployeeSchema);
-module.exports = User,Employee;
+module.exports = Employee;
