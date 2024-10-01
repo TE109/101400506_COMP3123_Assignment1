@@ -2,7 +2,8 @@ express = require("express");
 const app = express();
 const mongoose = require('mongoose');
 const ObjectID = require('mongodb').ObjectID;
-let userModel = require("./Schemas/User")
+const assert = require('assert');
+let userModel = require("./Schemas/User");
 
 
 const port = process.env.PORT || 3000;
@@ -19,7 +20,7 @@ app.get('/',(req,res) => {
 // Allow user to create new account
 app.post('/api/v1/user/signup', async (req,res) => {
     // const objectId = new ObjectID();
-    // const user = new userModel(req.body)
+    const user = new userModel(req.body)
     const data = req.body;
     console.log(data);
     try{
