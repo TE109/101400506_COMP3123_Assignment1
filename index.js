@@ -1,16 +1,19 @@
 express = require("express");
 const app = express();
 const mongoose = require('mongoose');
-const ObjectID = require('mongodb').ObjectID;
-const assert = require('assert');
+const crypto = require('crypto');
+const { UUID } = require('bson');
 let userModel = require("./Schemas/User");
 
 
 const port = process.env.PORT || 3000;
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const uri = "mongodb+srv://admin:pass@comp3123cluster.arhm6.mongodb.net/?retryWrites=true&w=majority&appName=Comp3123Cluster";
 mongoose.connect(uri,{
-
+    pkFactory: { createPk: () =>  new UUID().toBinary() }
 })
 
 app.get('/',(req,res) => {
@@ -19,14 +22,17 @@ app.get('/',(req,res) => {
 
 // Allow user to create new account
 app.post('/api/v1/user/signup', async (req,res) => {
-    // const objectId = new ObjectID();
-    const user = new userModel(req.body)
-    const data = req.body;
-    console.log(data);
+    userModel.init();
+    id = new mongoose.Types.ObjectId();
+    const user = new userModel({
+        _id: id,
+        username : req.body.username,
+        email : req.body.email,
+        password : crypto.createHash('md5').update(req.body.password).digest('hex'),
+    })
     try{
         await user.save()
-        console.log(req.body);
-        res.status(201).send("Student Record Saved")
+        res.status(201).send("User created Sucsesfully User Id: " + id)
     }catch(err){
         console.log("ERROR: " + err)
         res.status(500).send(err)
