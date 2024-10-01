@@ -85,20 +85,48 @@ app.post('/api/v1/emp/employees', async (req,res) => {
 })
 
 // Get all employee list
-app.get('/api/v1/emp/employees',(req,res) => {
-    res.status(200);
+app.get('/api/v1/emp/employees', async (req,res) => {
+    try {
+        const employee = await employeeModel.find();
+        res.status(200).send(employee);
+    } catch (err) {
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
+    } 
 })
 
 
-// User can get employee details by employee id
-app.get('/api/v1/emp/employees/{eid}',(req,res) => {
-    res.status(200);
+// Get employee details by employee id
+app.get('/api/v1/emp/employees/:eid',async (req,res) => {
+    const filter = {
+        _id : req.params.eid,
+    }
+    try {
+        const employee = await employeeModel.findOne(filter);
+        res.status(200).send(employee);
+    } catch (err) {
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
+    } 
 })
 
 
-// User can update employee details
-app.put('/api/v1/emp/employees/{eid}',(req,res) => {
-    res.status(200);
+// Update employee details
+app.put('/api/v1/emp/employees/:eid', async(req,res) => {
+    const filter = {
+        _id : req.params.eid,
+    }
+    const update = {
+        position : req.body.position,
+        salary : req.body.salary
+    }
+    try {
+        const employee = await employeeModel.findOneAndUpdate(filter,update);
+        res.status(200).send("Employee details updated successfully");
+    } catch (err) {
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
+    } 
 })
 
 // User can delete employee by employee id
