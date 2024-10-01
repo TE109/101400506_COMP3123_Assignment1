@@ -1,22 +1,36 @@
 express = require("express");
 const app = express();
+const mongoose = require('mongoose');
+const ObjectID = require('mongodb').ObjectID;
 let userModel = require("./Schemas/User")
+
 
 const port = process.env.PORT || 3000;
 
-/* Need mongoose.connect('mongodb+srv://<UserName>:<Password>@cluster0-
-8vkls.mongodb.net/<DBName>?retryWrites=true&w=majority', {
-    useNewUrlParser: true
-    });,
-*/
+const uri = "mongodb+srv://admin:pass@comp3123cluster.arhm6.mongodb.net/?retryWrites=true&w=majority&appName=Comp3123Cluster";
+mongoose.connect(uri,{
+
+})
 
 app.get('/',(req,res) => {
     res.send("Test");
 })
 
 // Allow user to create new account
-app.post('/api/v1/user/signup', (req,res) => {
-   
+app.post('/api/v1/user/signup', async (req,res) => {
+    // const objectId = new ObjectID();
+    // const user = new userModel(req.body)
+    const data = req.body;
+    console.log(data);
+    try{
+        await user.save()
+        console.log(req.body);
+        res.status(201).send("Student Record Saved")
+    }catch(err){
+        console.log("ERROR: " + err)
+        res.status(500).send(err)
+    }
+    
 })
 
 // Allow user to access the system
