@@ -17,9 +17,6 @@ mongoose.connect(uri,{
     pkFactory: { createPk: () =>  new UUID().toBinary() }
 })
 
-app.get('/',(req,res) => {
-    res.send("Test");
-})
 
 // Allow user to create new account
 app.post('/api/v1/user/signup', async (req,res) => {
@@ -103,6 +100,7 @@ app.get('/api/v1/emp/employees/:eid',async (req,res) => {
     }
     try {
         const employee = await employeeModel.findOne(filter);
+        if (employee == null) throw 'Null Exception Error'
         res.status(200).send(employee);
     } catch (err) {
         console.log("ERROR: " + err);
@@ -130,8 +128,17 @@ app.put('/api/v1/emp/employees/:eid', async(req,res) => {
 })
 
 // User can delete employee by employee id
-app.delete('/api/v1/emp/employees/{eid}',(req,res) => {
-    res.status(204);
+app.delete('/api/v1/emp/employees/:eid', async (req,res) => {
+    const filter = {
+        _id : req.params.eid,
+    }
+    try {
+        const employee = await employeeModel.deleteOne(filter);
+        res.status(204).send(employee);
+    } catch (err) {
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
+    } 
 })
 
 app.listen(port, () => {
