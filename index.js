@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const { UUID } = require('bson');
 let userModel = require("./Schemas/User");
+let employeeModel = require("./Schemas/Employee");
 
 
 const port = process.env.PORT || 3000;
@@ -22,7 +23,6 @@ app.get('/',(req,res) => {
 
 // Allow user to create new account
 app.post('/api/v1/user/signup', async (req,res) => {
-    userModel.init();
     id = new mongoose.Types.ObjectId();
     const user = new userModel({
         _id: id,
@@ -31,30 +31,64 @@ app.post('/api/v1/user/signup', async (req,res) => {
         password : crypto.createHash('md5').update(req.body.password).digest('hex'),
     })
     try{
-        await user.save()
-        res.status(201).send("User created Sucsesfully User Id: " + id)
+        await user.save();
+        res.status(201).send("User created Sucsesfully User Id: " + id);
     }catch(err){
-        console.log("ERROR: " + err)
-        res.status(500).send(err)
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
     }
     
 })
 
-// Allow user to access the system
-app.post('/api/v1/user/login',(req,res) => {
-    res.status(200);
+// Allow user to login to the system
+app.post('/api/v1/user/login', async(req,res) => {
+    try {
+        const filter = { 
+            email : req.body.email,
+            password : crypto.createHash('md5').update(req.body.password).digest('hex'),
+        };
+        const user = await userModel.findOne(filter);
+        if (user == null) throw 'Null Exception Error'
+        res.status(200).send("Login successful");
+    } catch (err) {
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
+    }
 })
 
-// User can get all employee list
+// Create new employee
+app.post('/api/v1/emp/employees', async (req,res) => {
+    id = new mongoose.Types.ObjectId();
+    let today = new Date();var dd = String(today.getDate()).padStart(2, '0');
+    let mm = String(today.getMonth() + 1).padStart(2, '0'); 
+    let yyyy = today.getFullYear();
+    today = mm + '/' + dd + '/' + yyyy;
+    const employee = new employeeModel({
+        _id: id,
+        first_name : req.body.first_name,
+        last_name : req.body.last_name,
+        email : req.body.email,
+        position : req.body.position,
+        salary : req.body.salary,
+        date_of_joining : req.body.date_of_joining,
+        department : req.body.department,
+        created_at : today,
+
+    })
+    try{
+        await employee.save();
+        res.status(201).send("Employee created Sucsesfully employee_id: " + id);
+    }catch(err){
+        console.log("ERROR: " + err);
+        res.status(500).send(err);
+    }
+})
+
+// Get all employee list
 app.get('/api/v1/emp/employees',(req,res) => {
     res.status(200);
 })
 
-
-// User can create new employee
-app.post('/api/v1/emp/employees',(req,res) => {
-    res.status(201);
-})
 
 // User can get employee details by employee id
 app.get('/api/v1/emp/employees/{eid}',(req,res) => {
