@@ -17,6 +17,7 @@ mongoose.connect(uri,{
     pkFactory: { createPk: () =>  new UUID().toBinary() }
 })
 
+app.get("/", (req, res) => res.send("Express on Vercel"));
 
 // Allow user to create new account
 app.post('/api/v1/user/signup', async (req,res) => {
